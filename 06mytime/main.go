@@ -14,3 +14,5 @@ func main() {
 	createdDate := time.Date(2020, time.February, 16, 12, 0, 0, 0, time.UTC)
 	fmt.Println("Created date is : ", createdDate)
 }
+
+//created CLI executable using go build command in terminal
