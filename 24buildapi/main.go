@@ -117,5 +117,20 @@ func updateOneCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO : send a response when id is not found
-	fjson.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("No course found with given id %s", params["id"])})
+	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("No course found with given id %s", params["id"])})
+}
+
+func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Delete one course")
+	w.Header().Set("Content-Type", "application/json")
+
+	params:=mux.Vars(r);
+
+	for index, course := range courses{
+		if course.CourseId == params["id"] {
+			courses= append(courses[:index],courses[index+1:]...)
+			json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Course with id %s deleted successfully", params["id"])})
+			return
+		}
+	}
 }
