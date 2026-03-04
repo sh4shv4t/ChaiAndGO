@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -33,7 +34,20 @@ func (c *Course) isEmpty() bool {
 }
 
 func main() {
+	fmt.Println("LCO API")
+	r:=mux.NewRouter()
 
+	//seeding data
+
+	courses = append(courses, Course{CourseId: "2", CourseName: "Go Programming", CoursePrice: 299, Author: &Author{Fullname: "Hitesh Choudhary", Website: "lco.dev"}})
+	r.HandleFunc("/", serveHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourse).Methods("GET")
+	r.HandleFunc("/courses/{id}", getOneCourse).Methods("GET")
+	r.HandleFunc("/courses", createOneCourse).Methods("POST")
+	r.HandleFunc("/courses/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/courses/{id}", deleteOneCourse).Methods("DELETE")
+
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
 
 //controllers - file
