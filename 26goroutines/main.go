@@ -19,14 +19,17 @@ func main() {
 	}
 
 	for _, website := range websiteList {
-		go getStatusCode(website)
 		wg.Add(1)
+		go getStatusCode(website)
 	}
 
 	wg.Wait()
+	fmt.Println("\nSignals:", signals)
 }
 
-var wg sync.WaitGroup //pointers
+var wg sync.WaitGroup
+var mut sync.Mutex
+var signals = []string{}
 
 func greeter(s string) {
 
@@ -37,11 +40,18 @@ func greeter(s string) {
 }
 
 func getStatusCode(endpoint string) {
-	defer wg.Done() //very good use of defer to ensure that Done is called even if there's an error
+	defer wg.Done()
+
 	res, err := http.Get(endpoint)
 	if err != nil {
 		fmt.Printf("Error fetching %s: %v\n", endpoint, err)
+		return
 	}
+	defer res.Body.Close()
+
+	mut.Lock()
+	signals = append(signals, fmt.Sprintf("%s => %d", endpoint, res.StatusCode))
+	mut.Unlock()
 
 	fmt.Printf("Status code for %s: %d\n", endpoint, res.StatusCode)
 
